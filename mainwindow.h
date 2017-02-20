@@ -41,6 +41,8 @@ private:
     void createMenus();
     void createActions();
 
+    void showview();//创建一个表格
+
 private slots:
     void on_login();
     void on_logout();

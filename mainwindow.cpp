@@ -5,6 +5,8 @@
 #include <QWidget>
 #include <QMdiSubWindow>
 #include "logindlg.h"
+#include <QStandardItemModel>
+#include <QTableView>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -21,6 +23,11 @@ MainWindow::MainWindow(QWidget *parent)
     mdiArea->setStyleSheet("background-image: url(1.jpg);");//背景设置为1.
     //mdiArea->setStyleSheet("border-image: url(1.jpg);");
     //利用stylesheet设置background-image或者borde,r-image前者是平铺方式设置背景，后者是拉伸方式设置背景
+
+    //当子窗口的范围超过父窗口的显示范围，父窗口自动添加横向滚动条
+    mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    //当子窗口的范围超过父窗口的显示范围，父窗口自动添加横纵向滚动条
+    mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
     QIcon icon("main.png"); //setWindowIcon(QIcon("main.png"));
     setWindowIcon(icon);//设置窗口光标。在CDMA前面
@@ -99,8 +106,8 @@ void MainWindow::createActions()
 
 void MainWindow::on_login()
 {
-//    logindlg *dlg = new logindlg;//非模式，错误
-//    dlg->show();
+    //    logindlg *dlg = new logindlg;//非模式，错误
+    //    dlg->show();
     //QMessageBox::information(this, tr("提示"), tr("Success"), QMessageBox::Ok | QMessageBox::No);
     logindlg dlg;//将对话框实例
     dlg.exec();//调用exec产生一个模式对话框，程序在exec函数这个地方阻塞
@@ -120,15 +127,15 @@ void MainWindow::on_logout()
 
 void MainWindow::on_exit()
 {
-        close();
+    close();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     //通过question函数的返回值来判断用户点击的是yes还是NO
     QMessageBox::StandardButton button = QMessageBox::question(this, "提示",
-                                                                  "是否退出程序",
-                                                                  QMessageBox::Yes | QMessageBox::No);
+                                                               "是否退出程序",
+                                                               QMessageBox::Yes | QMessageBox::No);
     if(button == QMessageBox::Yes)
         event->accept();
     else
@@ -137,7 +144,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::on_script()
 {
-    showsub();
+    showview();
 }
 
 void MainWindow::tileSubWindows()
@@ -172,4 +179,45 @@ void MainWindow::showsub()
     w1->show();
     mdiArea->activeSubWindow()->resize(width() - 100, height() - 100);//设置widget活动窗口大小
 
+}
+
+void MainWindow::showview()//创建一个表格
+{
+    QStandardItemModel *model = new QStandardItemModel(5, 3);//创建一个5行3列的表格
+
+    //设置module的列表头名称
+    model->setHeaderData(0, Qt::Horizontal, "姓名");
+    model->setHeaderData(1, Qt::Horizontal, "性别");
+    model->setHeaderData(2, Qt::Horizontal, "年龄");
+    //设置module的每一个单元格的内容
+    model->setData(model->index(0, 0, QModelIndex()), tr("张三"));
+    model->setData(model->index(0, 1, QModelIndex()), "性别");
+    model->setData(model->index(0, 2, QModelIndex()), "30");
+
+    model->setData(model->index(1, 0, QModelIndex()), "李四");
+    model->setData(model->index(1, 1, QModelIndex()), "男");
+    model->setData(model->index(1, 2, QModelIndex()), "30");
+
+    model->setData(model->index(2, 0, QModelIndex()), "王五");
+    model->setData(model->index(2, 1, QModelIndex()), "女");
+    model->setData(model->index(2, 2, QModelIndex()), "10");
+
+    model->setData(model->index(3, 0, QModelIndex()), "赵六");
+    model->setData(model->index(3, 1, QModelIndex()), "女");
+    model->setData(model->index(3, 2, QModelIndex()), "40");
+
+    model->setData(model->index(4, 0, QModelIndex()), "王麻子");
+    model->setData(model->index(4, 1, QModelIndex()), "男");
+    model->setData(model->index(4, 2, QModelIndex()), "30");
+
+    QTableView *view = new QTableView;
+    view->setAttribute(Qt::WA_DeleteOnClose);
+    //view在close时候回自动delete，这个时候如果view
+    mdiArea->addSubWindow(view);
+    view->setStyleSheet("border-image: url(3.jpg);");//摄者背景图片
+
+    //view继承自widget，如果没有model,那么view不会显示任何数据
+    view->setModel(model);
+    view->show();
+    mdiArea->activeSubWindow()->resize(width() - 100, height() - 100);
 }

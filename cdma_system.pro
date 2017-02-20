@@ -6,13 +6,19 @@
 
 QT       += core gui
 
+LIBS += -LC:\mymysql\mysql\lib -llibmysql
+
 TARGET = cdma_system
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    logindlg.cpp
+    logindlg.cpp \
+    scriptdlg.cpp \
+    mymysql.cpp
 
 HEADERS  += mainwindow.h \
-    logindlg.h
+    logindlg.h \
+    scriptdlg.h \
+    mymysql.h

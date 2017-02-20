@@ -7,6 +7,8 @@
 #include "logindlg.h"
 #include <QStandardItemModel>
 #include <QTableView>
+#include "scriptdlg.h"
+#include "mymysql.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -114,11 +116,25 @@ void MainWindow::on_login()
 
     if(dlg.islogin)
     {
-        if((dlg.userid == "dbuser1") && (dlg.passwd == "wx456456"))
-            QMessageBox::information(this, "", "登录成功");
+        mymysql db;
+        //data()可以返回一个字符指针
+        int res = db.sql_connect(dlg.hostip.toStdString().data(),
+                                 dlg.userid.toStdString().data(),
+                                 dlg.passwd.toStdString().data(),
+                                 dlg.dbname.toStdString().data());
+        if(res == -1)
+            QMessageBox::information(this, "", "登录失败");
         else
-            QMessageBox::information(this, "", "登陆失败");
+            QMessageBox::information(this, "", "登陆成功");
     }
+
+//    if(dlg.islogin)
+//    {
+//        if((dlg.userid == "dbuser1") && (dlg.passwd == "wx456456"))
+//            QMessageBox::information(this, "", "登录成功");
+//        else
+//            QMessageBox::information(this, "", "登陆失败");
+//    }
 }
 
 void MainWindow::on_logout()
@@ -144,7 +160,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::on_script()
 {
-    showview();
+    //showview();
+    scriptDlg dlg;//申请scriptdlg类的实例化
+    dlg.exec();
 }
 
 void MainWindow::tileSubWindows()

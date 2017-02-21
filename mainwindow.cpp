@@ -8,7 +8,7 @@
 #include <QStandardItemModel>
 #include <QTableView>
 #include "scriptdlg.h"
-#include "mymysql.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -85,6 +85,7 @@ void MainWindow::createActions()
 
     scripAction = new QAction(tr("执行脚本"), this);
     scripAction->setShortcut(tr("Ctrl+P"));
+    scripAction->setEnabled(false);
     connect(scripAction, SIGNAL(triggered()), this, SLOT(on_script()));
 
     cascadeAction = new QAction(tr("层叠"), this);
@@ -116,16 +117,18 @@ void MainWindow::on_login()
 
     if(dlg.islogin)
     {
-        mymysql db;
         //data()可以返回一个字符指针
         int res = db.sql_connect(dlg.hostip.toStdString().data(),
                                  dlg.userid.toStdString().data(),
                                  dlg.passwd.toStdString().data(),
                                  dlg.dbname.toStdString().data());
         if(res == -1)
-            QMessageBox::information(this, "", "登录失败");
+            QMessageBox::information(this, "登录失败", db.geterror());//geterror()减少窗口弹出
         else
+        {
             QMessageBox::information(this, "", "登陆成功");
+            scripAction->setEnabled(true);
+        }
     }
 
 //    if(dlg.islogin)
@@ -139,6 +142,14 @@ void MainWindow::on_login()
 
 void MainWindow::on_logout()
 {
+    QMessageBox::StandardButton button = QMessageBox::question(this, "提示",
+                                                               "是否注销登录",
+                                                               QMessageBox::Yes | QMessageBox::No);
+    if(button == QMessageBox::Yes)
+       {
+           db.sql_disconnet();
+           scripAction->setEnabled(false);
+       }
 }
 
 void MainWindow::on_exit()
@@ -163,6 +174,22 @@ void MainWindow::on_script()
     //showview();
     scriptDlg dlg;//申请scriptdlg类的实例化
     dlg.exec();
+    //在写代码的时间先测试
+    /*if(db.sql_exec("delete from table1 where name = 'jk'") == -1)
+        QMessageBox::information(this, "exec失败", db.geterror());//geterror()减少窗口弹出
+    else
+        QMessageBox::information(this, "", "exec成功");*/
+
+    if(dlg.islogin)
+    {
+        if(db.sql_exec(dlg.SQL.toStdString().data()) == -1)
+            QMessageBox::information(this, "exec失败", db.geterror());//geterror()减少窗口弹出
+        else
+            QMessageBox::information(this, "", "exec成功");
+
+    }
+
+
 }
 
 void MainWindow::tileSubWindows()

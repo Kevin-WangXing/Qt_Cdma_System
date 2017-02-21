@@ -7,6 +7,7 @@
 #include <QAction>
 #include <QMdiArea>
 #include <QCloseEvent>
+#include "mymysql.h"
 
 class MainWindow : public QMainWindow
 {
@@ -18,6 +19,7 @@ public:
     void closeEvent(QCloseEvent *event);
 
 private:
+    mymysql db;
     QMdiArea *mdiArea;
 
     QMenu *adminMenu;

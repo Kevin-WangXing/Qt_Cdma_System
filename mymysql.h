@@ -8,13 +8,17 @@ class mymysql
 {
 public:
     mymysql();
+    const char *geterror();//返回一个有效地址，
     //第一个参数代表server IP地址，第二个用户名，第三个密码，第四个数据库名称
     int sql_connect(const char *Hostname, const char *User,
                     const char *Passwd, const char *Dbname);
+    void sql_disconnet();
+    int sql_exec(const char *SQL);
 
 private:
     MYSQL *connection;
     MYSQL mysql;
+    char buf[1024];//存放错误描述  geterror()
 };
 
 #endif // MYMYSQL_H

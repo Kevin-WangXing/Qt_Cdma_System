@@ -22,4 +22,18 @@ scriptDlg::scriptDlg(QWidget *parent) :
     layout->addWidget(textEditSQL, 0, 1);
     layout->addLayout(layout1, 1, 1);
 
+    connect(okBtn, SIGNAL(clicked()), this, SLOT(onBtnclick()));
+    connect(cancelBtn, SIGNAL(clicked()), this, SLOT(cancelBtnclick()));
+
+}
+
+void scriptDlg::onBtnclick()
+{
+    SQL = textEditSQL->toPlainText();//TextediT没有text函数，得到textedit中用户输入的内容函数为toplainedit
+    close();
+}
+
+void scriptDlg::cancelBtnclick()
+{
+    close();
 }

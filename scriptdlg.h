@@ -11,11 +11,16 @@ class scriptDlg : public QDialog
     Q_OBJECT
 public:
     explicit scriptDlg(QWidget *parent = 0);
+    QString SQL;
 
 private:
     QLabel *label0;
     QPushButton *okBtn, *cancelBtn;
     QTextEdit *textEditSQL;
+
+private slots:
+    void onBtnclick();
+    void cancelBtnclick();
 
 };
 

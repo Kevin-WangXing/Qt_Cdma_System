@@ -194,7 +194,17 @@ void MainWindow::script_msg(const char *SQL)
     int res = 0;
     if((strncmp(SQL, "SELECT", 6) == 0) || (strncmp(SQL, "select", 6) == 0))
     {
-        res = db.sql_open(SQL);//如果是select执行这个
+        QStandardItemModel *modul = NULL;
+        res = db.sql_open(SQL, &modul);//如果是select执行这个
+
+        QTableView *view = new QTableView;
+        view->setAttribute(Qt::WA_DeleteOnClose);//view在close时间自动delete
+        mdiArea->addSubWindow(view);
+        view->setStyleSheet("border-image: url(3.jpg);");
+
+        view->setModel(modul);
+        view->show();
+        mdiArea->activeSubWindow()->resize(width() - 100, height() - 100);
     }
     else
         res = db.sql_exec(SQL);

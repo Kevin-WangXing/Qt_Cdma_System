@@ -58,7 +58,7 @@ int mymysql::sql_exec(const char *SQL)
     return 0;
 }
 
-int mymysql::sql_open(const char *SQL)
+int mymysql::sql_open(const char *SQL, QStandardItemModel **p)
 {
     if(mysql_query(connection, SQL) != 0)
     {
@@ -77,22 +77,22 @@ int mymysql::sql_open(const char *SQL)
 
     int rowcount = mysql_affected_rows(connection);//这个函数返回SQL语句执行后有多少航
     int fieldcount = mysql_field_count(connection);//返回有多少列
+
+    *p = new QStandardItemModel(rowcount, fieldcount);
     MYSQL_FIELD *field;
-    while(1)
+    int i = 0, j = 0;
+    for(i = 0; i < fieldcount; i++)
     {
         field = mysql_fetch_field(result);
-        if(field == NULL)
-            break;
-        QMessageBox::information(0, "", field->name);
+        (*p)->setHeaderData(i, Qt::Horizontal, field->name);
     }
 
-    int i = 0, j = 0;
-    for(; i < rowcount; i++)//遍历每一行
+    for(i = 0; i < rowcount; i++)//遍历每一行
     {
         MYSQL_ROW row = mysql_fetch_row(result);
-        for(; j < fieldcount; j++)
+        for(j = 0; j < fieldcount; j++)
         {
-            QMessageBox::information(0, "", row[j]);
+            (*p)->setData((*p)->index(i, j, QModelIndex()), row[j]);
         }
     }
 

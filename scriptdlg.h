@@ -13,6 +13,8 @@ public:
     explicit scriptDlg(QWidget *parent = 0);
     QString SQL;
 
+    bool islogin;
+
 private:
     QLabel *label0;
     QPushButton *okBtn, *cancelBtn;

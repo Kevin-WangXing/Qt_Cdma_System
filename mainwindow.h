@@ -43,6 +43,8 @@ private:
     void createMenus();
     void createActions();
 
+    void script_msg(const char *SQL);
+
     void showview();//创建一个表格
 
 private slots:

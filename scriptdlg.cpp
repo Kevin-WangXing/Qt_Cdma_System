@@ -5,6 +5,7 @@
 scriptDlg::scriptDlg(QWidget *parent) :
     QDialog(parent)
 {
+    islogin = false;
     okBtn = new QPushButton;
     okBtn->setText(tr("执行"));
     cancelBtn = new QPushButton;
@@ -30,6 +31,7 @@ scriptDlg::scriptDlg(QWidget *parent) :
 void scriptDlg::onBtnclick()
 {
     SQL = textEditSQL->toPlainText();//TextediT没有text函数，得到textedit中用户输入的内容函数为toplainedit
+    islogin = true;
     close();
 }
 

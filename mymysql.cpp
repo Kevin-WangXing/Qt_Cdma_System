@@ -3,6 +3,8 @@
 #include <QObject>
 #include <string.h>
 
+//所有的有关MYSQL API函数电泳，都放在
+
 //建这个类的目的是实现封装，封装所有和mysql相关的函数
 //建这个类的目的是实现封装，封装所有和MYSQL相关的函数
 mymysql::mymysql()
@@ -53,5 +55,48 @@ int mymysql::sql_exec(const char *SQL)
         strcpy(buf, mysql_error(&mysql));
         return -1;
     }
+    return 0;
+}
+
+int mymysql::sql_open(const char *SQL)
+{
+    if(mysql_query(connection, SQL) != 0)
+    {
+        memset(buf, 0, sizeof(buf));
+        strcpy(buf, mysql_error(&mysql));
+        return -1;
+    }
+
+    MYSQL_RES *result = mysql_store_result(connection);
+    if(result == NULL)
+    {
+        memset(buf, 0, sizeof(buf));
+        strcpy(buf, mysql_error(&mysql));
+        return -1;
+    }
+
+    int rowcount = mysql_affected_rows(connection);//这个函数返回SQL语句执行后有多少航
+    int fieldcount = mysql_field_count(connection);//返回有多少列
+    MYSQL_FIELD *field;
+    while(1)
+    {
+        field = mysql_fetch_field(result);
+        if(field == NULL)
+            break;
+        QMessageBox::information(0, "", field->name);
+    }
+
+    int i = 0, j = 0;
+    for(; i < rowcount; i++)//遍历每一行
+    {
+        MYSQL_ROW row = mysql_fetch_row(result);
+        for(; j < fieldcount; j++)
+        {
+            QMessageBox::information(0, "", row[j]);
+        }
+    }
+
+
+    mysql_free_result(result);//释放通过mysql_store_result函数分配的内存空间
     return 0;
 }

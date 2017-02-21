@@ -131,13 +131,13 @@ void MainWindow::on_login()
         }
     }
 
-//    if(dlg.islogin)
-//    {
-//        if((dlg.userid == "dbuser1") && (dlg.passwd == "wx456456"))
-//            QMessageBox::information(this, "", "登录成功");
-//        else
-//            QMessageBox::information(this, "", "登陆失败");
-//    }
+    //    if(dlg.islogin)
+    //    {
+    //        if((dlg.userid == "dbuser1") && (dlg.passwd == "wx456456"))
+    //            QMessageBox::information(this, "", "登录成功");
+    //        else
+    //            QMessageBox::information(this, "", "登陆失败");
+    //    }
 }
 
 void MainWindow::on_logout()
@@ -146,10 +146,10 @@ void MainWindow::on_logout()
                                                                "是否注销登录",
                                                                QMessageBox::Yes | QMessageBox::No);
     if(button == QMessageBox::Yes)
-       {
-           db.sql_disconnet();
-           scripAction->setEnabled(false);
-       }
+    {
+        db.sql_disconnet();
+        scripAction->setEnabled(false);
+    }
 }
 
 void MainWindow::on_exit()
@@ -182,13 +182,27 @@ void MainWindow::on_script()
 
     if(dlg.islogin)
     {
-        if(db.sql_exec(dlg.SQL.toStdString().data()) == -1)
-            QMessageBox::information(this, "exec失败", db.geterror());//geterror()减少窗口弹出
-        else
-            QMessageBox::information(this, "", "exec成功");
+        script_msg(dlg.SQL.toStdString().data());
 
     }
 
+
+}
+
+void MainWindow::script_msg(const char *SQL)
+{
+    int res = 0;
+    if((strncmp(SQL, "SELECT", 6) == 0) || (strncmp(SQL, "select", 6) == 0))
+    {
+        res = db.sql_open(SQL);//如果是select执行这个
+    }
+    else
+        res = db.sql_exec(SQL);
+
+    if(res == -1 )
+        QMessageBox::information(this, "exec失败", db.geterror());//geterror()减少窗口弹出
+    else
+        QMessageBox::information(this, "", "exec成功");
 
 }
 

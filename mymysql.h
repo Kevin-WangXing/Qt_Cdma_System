@@ -14,6 +14,7 @@ public:
                     const char *Passwd, const char *Dbname);
     void sql_disconnet();
     int sql_exec(const char *SQL);
+    int sql_open(const char *SQL);
 
 private:
     MYSQL *connection;
